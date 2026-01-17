@@ -1,5 +1,27 @@
 #include "../include/collision.hpp"
 #include "../include/ball.hpp"
+#include "../include/score.hpp"
+#include <SDL2/SDL_mixer.h>
+#include <stdexcept>
+
+Mix_Chunk *wallHitSound;
+Mix_Chunk *paddleHitSound;
+
+void InitializeCollisionSounds() {
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) != 0) {
+    throw std::runtime_error("Failed to open audio: " +
+                             std::string(Mix_GetError()));
+  }
+
+  wallHitSound = Mix_LoadWAV("sounds/WallHit.wav");
+  paddleHitSound = Mix_LoadWAV("sounds/PaddleHit.wav");
+}
+
+void FreeCollisionSounds() {
+  Mix_FreeChunk(wallHitSound);
+  Mix_FreeChunk(paddleHitSound);
+  Mix_CloseAudio();
+}
 
 Contact CheckPaddleCollision(Ball const &ball, Paddle const &paddle) {
   float ballLeft = ball.position.x;
@@ -74,4 +96,32 @@ Contact CheckWallCollision(Ball const &ball) {
   }
 
   return contact;
+}
+
+void HandleCollision(Ball &ball, Paddle &paddleOne, Paddle &paddleTwo,
+                     PlayerScore &playerOneScoreText,
+                     PlayerScore &playerTwoScoreText, int &playerTwoScore,
+                     int &playerOneScore) {
+  if (Contact contact = CheckPaddleCollision(ball, paddleOne);
+      contact.type != CollisionType::None) {
+    ball.CollideWithPaddle(contact);
+    Mix_PlayChannel(-1, paddleHitSound, 0);
+  } else if (contact = CheckPaddleCollision(ball, paddleTwo);
+             contact.type != CollisionType::None) {
+    ball.CollideWithPaddle(contact);
+    Mix_PlayChannel(-1, paddleHitSound, 0);
+  } else if (contact = CheckWallCollision(ball);
+             contact.type != CollisionType::None) {
+    ball.CollideWithWall(contact);
+
+    if (contact.type == CollisionType::Left) {
+      ++playerTwoScore;
+      playerTwoScoreText.SetScore(playerTwoScore);
+    } else if (contact.type == CollisionType::Right) {
+      ++playerOneScore;
+      playerOneScoreText.SetScore(playerOneScore);
+    } else {
+      Mix_PlayChannel(-1, wallHitSound, 0);
+    }
+  }
 }

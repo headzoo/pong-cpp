@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./fonts.hpp"
 #include "./vector.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -17,10 +18,9 @@ public:
    *
    * @param position The position of the player score.
    * @param renderer The renderer to draw the player score.
-   * @param font The font to use for the player score.
    */
-  PlayerScore(Vec2D position, SDL_Renderer *renderer, TTF_Font *font)
-      : renderer(renderer), font(font) {
+  PlayerScore(Vec2D position, SDL_Renderer *renderer)
+      : renderer(renderer), font(InitializeScoreFont()) {
     surface = TTF_RenderText_Solid(font, "0", {0xFF, 0xFF, 0xFF, 0xFF});
     texture = SDL_CreateTextureFromSurface(renderer, surface);
 

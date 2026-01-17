@@ -1,8 +1,19 @@
 #pragma once
 
 #include "../include/paddle.hpp"
+#include "../include/score.hpp"
 
 class Ball;
+
+/**
+ * @brief Initializes the collision sounds.
+ */
+void InitializeCollisionSounds();
+
+/**
+ * @brief Frees the collision sounds.
+ */
+void FreeCollisionSounds();
 
 /**
  * @brief The type of collision.
@@ -40,3 +51,8 @@ Contact CheckPaddleCollision(Ball const &ball, Paddle const &paddle);
  * @return The contact information of the collision.
  */
 Contact CheckWallCollision(Ball const &ball);
+
+void HandleCollision(Ball &ball, Paddle &paddleOne, Paddle &paddleTwo,
+                     PlayerScore &playerOneScoreText,
+                     PlayerScore &playerTwoScoreText, int &playerTwoScore,
+                     int &playerOneScore);
