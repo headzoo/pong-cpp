@@ -1,15 +1,25 @@
 #pragma once
 
-#include "vec2.hpp"
+#include "./vector.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
 
 using namespace std;
 
+/**
+ * @brief The score of a player.
+ */
 class PlayerScore {
 public:
-  PlayerScore(Vec2 position, SDL_Renderer *renderer, TTF_Font *font)
+  /**
+   * @brief Constructs a new player score.
+   *
+   * @param position The position of the player score.
+   * @param renderer The renderer to draw the player score.
+   * @param font The font to use for the player score.
+   */
+  PlayerScore(Vec2D position, SDL_Renderer *renderer, TTF_Font *font)
       : renderer(renderer), font(font) {
     surface = TTF_RenderText_Solid(font, "0", {0xFF, 0xFF, 0xFF, 0xFF});
     texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -23,11 +33,19 @@ public:
     rect.h = height;
   }
 
+  /**
+   * @brief Destroys the player score.
+   */
   ~PlayerScore() {
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
   }
 
+  /**
+   * @brief Sets the score of the player.
+   *
+   * @param score The score to set.
+   */
   void SetScore(int score) {
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
@@ -42,8 +60,12 @@ public:
     rect.h = height;
   }
 
+  /**
+   * @brief Draws the player score.
+   */
   void Draw() { SDL_RenderCopy(renderer, texture, nullptr, &rect); }
 
+private:
   SDL_Renderer *renderer;
   TTF_Font *font;
   SDL_Surface *surface{};
